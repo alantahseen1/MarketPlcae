@@ -62,23 +62,7 @@
                                 <h3 class="text-base sm:text-lg font-bold text-gray-900">{{ $product->title }}</h3>
 
                                 <!-- Status Badge -->
-                                @if($product->status === 'pending')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                                        {{ __('products.status_pending') }}
-                                    </span>
-                                @elseif($product->status === 'approved')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                        {{ __('products.status_approved') }}
-                                    </span>
-                                @elseif($product->status === 'rejected')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
-                                        {{ __('products.status_rejected') }}
-                                    </span>
-                                @elseif($product->status === 'sold')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-300">
-                                        {{ __('products.status_sold') }}
-                                    </span>
-                                @endif
+                                <x-status-badge :status="$product->status" />
                             </div>
 
                             <div class="flex items-center gap-3 text-xs sm:text-sm text-gray-500">

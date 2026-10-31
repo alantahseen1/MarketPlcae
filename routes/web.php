@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
+use App\Http\Controllers\Staff\AuthController as StaffAuthController;
+use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
+use App\Http\Controllers\Staff\ProductReviewController as StaffProductReviewController;
+use App\Http\Controllers\Staff\StaffUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,5 +48,42 @@ Route::middleware(['auth:customer', 'customer.not_banned'])->group(function () {
         Route::put('/{id}', [CustomerProductController::class, 'update'])->name('update');
         Route::delete('/{id}', [CustomerProductController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/sold', [CustomerProductController::class, 'markSold'])->name('sold');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Staff Guest Routes (Login)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('staff')->middleware('staff.guest')->group(function () {
+    Route::get('/login', [StaffAuthController::class, 'showLoginForm'])->name('staff.login');
+    Route::post('/login', [StaffAuthController::class, 'login']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Staff Authenticated Routes (Staff Guard + Active Account)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('staff')->middleware(['auth:staff', 'staff.active'])->name('staff.')->group(function () {
+    Route::post('/logout', [StaffAuthController::class, 'logout'])->name('logout');
+    Route::get('/', [StaffDashboardController::class, 'index'])->name('dashboard');
+
+    // Listing Reviews (Admin & Subadmin)
+    Route::prefix('products')->name('products.')->group(function () {
+        Route::get('/', [StaffProductReviewController::class, 'index'])->name('index');
+        Route::get('/{id}', [StaffProductReviewController::class, 'show'])->name('show');
+        Route::post('/{id}/approve', [StaffProductReviewController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [StaffProductReviewController::class, 'reject'])->name('reject');
+    });
+
+    // Staff Management (Admin only)
+    Route::prefix('users')->name('users.')->middleware('staff.role:admin')->group(function () {
+        Route::get('/', [StaffUserController::class, 'index'])->name('index');
+        Route::get('/create', [StaffUserController::class, 'create'])->name('create');
+        Route::post('/', [StaffUserController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [StaffUserController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [StaffUserController::class, 'update'])->name('update');
     });
 });

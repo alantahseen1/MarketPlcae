@@ -49,6 +49,9 @@ return [
         'delete_photos' => 'وێنە سڕاوەکان',
         'delete_photos.*' => 'وێنەی سڕاوە',
         'main_photo_id' => 'وێنەی سەرەکی',
+        'rejection_reason' => 'هۆکاری ڕەتکردنەوە',
+        'role' => 'دەسەڵات',
+        'is_active' => 'چالاکی هەژمار',
     ],
 
     'custom' => [

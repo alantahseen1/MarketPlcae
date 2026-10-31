@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Middleware\EnsureCustomerNotBanned;
+use App\Http\Middleware\EnsureStaffActive;
+use App\Http\Middleware\EnsureStaffRole;
 use App\Http\Middleware\RedirectIfCustomerAuthenticated;
+use App\Http\Middleware\RedirectIfStaffAuthenticated;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,9 +17,20 @@ $app = Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(function (Request $request) {
+            if ($request->is('staff*')) {
+                return route('staff.login');
+            }
+
+            return route('login');
+        });
+
         $middleware->alias([
             'customer.not_banned' => EnsureCustomerNotBanned::class,
             'customer.guest' => RedirectIfCustomerAuthenticated::class,
+            'staff.guest' => RedirectIfStaffAuthenticated::class,
+            'staff.active' => EnsureStaffActive::class,
+            'staff.role' => EnsureStaffRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
