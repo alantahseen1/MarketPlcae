@@ -15,38 +15,57 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Site Name / Logo -->
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-6">
                     <a href="{{ route('home') }}" class="text-xl sm:text-2xl font-bold text-indigo-600 hover:text-indigo-700 transition">
                         {{ __('app.site_name') }}
                     </a>
+
+                    <!-- Desktop Nav Links -->
+                    <nav class="hidden md:flex items-center gap-2">
+                        <a href="{{ route('home') }}" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 rounded-md transition {{ request()->routeIs('home') ? 'text-indigo-600 font-bold' : '' }}">
+                            {{ __('app.home') }}
+                        </a>
+
+                        @if(auth('customer')->check())
+                            <a href="{{ route('customer.products.index') }}" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 rounded-md transition {{ request()->routeIs('customer.products.*') ? 'text-indigo-600 font-bold' : '' }}">
+                                {{ __('products.my_products') }}
+                            </a>
+                        @endif
+                    </nav>
                 </div>
 
-                <!-- Desktop Navigation -->
+                <!-- Desktop Navigation (User / Auth) -->
                 <nav class="hidden md:flex items-center gap-4">
-                    <a href="{{ route('home') }}" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 rounded-md transition">
-                        {{ __('app.home') }}
-                    </a>
-
                     @if(auth('customer')->check())
-                        <div class="flex items-center gap-3 border-r border-gray-200 pr-4 mr-2">
-                            <span class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                <span class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">
-                                    {{ mb_substr(auth('customer')->user()->full_name, 0, 1) }}
-                                </span>
-                                {{ auth('customer')->user()->full_name }}
-                                @if(auth('customer')->user()->type === 'shop')
-                                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full border border-indigo-200">
-                                        {{ auth('customer')->user()->shop_name }}
-                                    </span>
-                                @endif
-                            </span>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('customer.products.create') }}"
+                                class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                {{ __('products.add_product') }}
+                            </a>
 
-                            <form action="{{ route('logout') }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition">
-                                    {{ __('app.logout') }}
-                                </button>
-                            </form>
+                            <div class="flex items-center gap-3 border-r border-gray-200 pr-4 mr-2">
+                                <span class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <span class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">
+                                        {{ mb_substr(auth('customer')->user()->full_name, 0, 1) }}
+                                    </span>
+                                    {{ auth('customer')->user()->full_name }}
+                                    @if(auth('customer')->user()->type === 'shop')
+                                        <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full border border-indigo-200">
+                                            {{ auth('customer')->user()->shop_name }}
+                                        </span>
+                                    @endif
+                                </span>
+
+                                <form action="{{ route('logout') }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition">
+                                        {{ __('app.logout') }}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     @else
                         <div class="flex items-center gap-2 border-r border-gray-200 pr-4 mr-2">
@@ -78,6 +97,13 @@
                     </a>
 
                     @if(auth('customer')->check())
+                        <a href="{{ route('customer.products.index') }}" class="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md">
+                            {{ __('products.my_products') }}
+                        </a>
+                        <a href="{{ route('customer.products.create') }}" class="px-3 py-2 text-base font-medium text-center text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg">
+                            {{ __('products.add_product') }}
+                        </a>
+
                         <div class="px-3 py-2 text-base font-semibold text-gray-900 border-t border-gray-100 mt-2 pt-2">
                             {{ auth('customer')->user()->full_name }}
                             @if(auth('customer')->user()->type === 'shop')
@@ -145,4 +171,3 @@
     </script>
 </body>
 </html>
-

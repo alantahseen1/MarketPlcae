@@ -17,26 +17,26 @@ class DatabaseSeeder extends Seeder
         // 1. Admin staff user
         User::create([
             'full_name' => 'بەڕێوەبەر',
-            'email' => 'admin@example.com',
+            'email' => 'admin2@example.com',
             'password_hash' => Hash::make('password123'),
             'role' => 'admin',
             'is_active' => true,
         ]);
 
-        // 2. Initial categories in Kurdish (Sorani)
-        $categories = [
-            'مۆبایل',                          // Phones
-            'لاپتۆپ',                          // Laptops
-            'کۆمپیوتەر',                       // PCs
-            'بارگاویکەرەوە و پێداویستییەکان', // Chargers and accessories
-            'ئەوانی تر',                       // Other
-        ];
+        // // 2. Initial categories in Kurdish (Sorani)
+        // $categories = [
+        //     'مۆبایل',                          // Phones
+        //     'لاپتۆپ',                          // Laptops
+        //     'کۆمپیوتەر',                       // PCs
+        //     'بارگاویکەرەوە و پێداویستییەکان', // Chargers and accessories
+        //     'ئەوانی تر',                       // Other
+        // ];
 
-        foreach ($categories as $categoryName) {
-            Category::create([
-                'name' => $categoryName,
-                'is_active' => true,
-            ]);
-        }
+        // foreach ($categories as $categoryName) {
+        //     Category::create([
+        //         'name' => $categoryName,
+        //         'is_active' => true,
+        //     ]);
+        // }
     }
 }
