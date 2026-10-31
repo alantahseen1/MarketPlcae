@@ -81,4 +81,3 @@ class StaffUserController extends Controller
             ->with('success', __('staff.staff_updated'));
     }
 }
-

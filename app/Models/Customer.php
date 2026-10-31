@@ -121,4 +121,3 @@ class Customer extends Authenticatable
         return $this->hasMany(Report::class, 'reported_customer_id');
     }
 }
-

@@ -100,4 +100,3 @@ class Report extends Model
         return $this->belongsTo(User::class, 'handled_by');
     }
 }
-

@@ -92,4 +92,3 @@ class ProductReviewController extends Controller
             ->with('success', __('staff.rejected_success'));
     }
 }
-

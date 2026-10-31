@@ -139,4 +139,3 @@ class ProductController extends Controller
             ->with('success', __('products.sold_success'));
     }
 }
-

@@ -38,4 +38,3 @@ trait ProductValidationRules
         ];
     }
 }
-

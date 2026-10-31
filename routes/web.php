@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
+use App\Http\Controllers\Public\HomeController;
+use App\Http\Controllers\Public\ProductBrowseController;
+use App\Http\Controllers\Public\ShopController;
 use App\Http\Controllers\Staff\AuthController as StaffAuthController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Staff\ProductReviewController as StaffProductReviewController;
@@ -13,9 +16,10 @@ use Illuminate\Support\Facades\Route;
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('public.home');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/products', [ProductBrowseController::class, 'index'])->name('products.index');
+Route::get('/products/{id}', [ProductBrowseController::class, 'show'])->name('products.show');
+Route::get('/shops/{customerId}', [ShopController::class, 'show'])->name('shops.show');
 
 /*
 |--------------------------------------------------------------------------

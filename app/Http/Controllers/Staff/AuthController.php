@@ -76,4 +76,3 @@ class AuthController extends Controller
         return redirect()->route('staff.login')->with('success', __('auth.logged_out'));
     }
 }
-

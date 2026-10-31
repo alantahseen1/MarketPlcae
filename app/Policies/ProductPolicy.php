@@ -41,4 +41,3 @@ class ProductPolicy
             && $product->status === 'approved';
     }
 }
-

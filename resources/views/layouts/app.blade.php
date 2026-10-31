@@ -26,6 +26,10 @@
                             {{ __('app.home') }}
                         </a>
 
+                        <a href="{{ route('products.index') }}" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 rounded-md transition {{ request()->routeIs('products.*') ? 'text-indigo-600 font-bold' : '' }}">
+                            {{ __('public.browse_products') }}
+                        </a>
+
                         @if(auth('customer')->check())
                             <a href="{{ route('customer.products.index') }}" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 rounded-md transition {{ request()->routeIs('customer.products.*') ? 'text-indigo-600 font-bold' : '' }}">
                                 {{ __('products.my_products') }}
@@ -94,6 +98,10 @@
                 <div class="flex flex-col gap-2">
                     <a href="{{ route('home') }}" class="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md">
                         {{ __('app.home') }}
+                    </a>
+
+                    <a href="{{ route('products.index') }}" class="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md">
+                        {{ __('public.browse_products') }}
                     </a>
 
                     @if(auth('customer')->check())

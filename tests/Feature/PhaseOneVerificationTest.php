@@ -220,4 +220,3 @@ class PhaseOneVerificationTest extends TestCase
         $this->assertNotContains($approvedBanned->id, $visibleIds);
     }
 }
-
