@@ -118,4 +118,3 @@ class ReportController extends Controller
         return redirect($redirectUrl)->with('success', __('reports.success_message'));
     }
 }
-

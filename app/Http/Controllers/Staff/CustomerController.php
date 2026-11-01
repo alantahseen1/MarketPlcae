@@ -175,4 +175,3 @@ class CustomerController extends Controller
             ->with('success', __('staff.customer_unverified_success'));
     }
 }
-

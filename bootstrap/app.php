@@ -5,6 +5,8 @@ use App\Http\Middleware\EnsureStaffActive;
 use App\Http\Middleware\EnsureStaffRole;
 use App\Http\Middleware\RedirectIfCustomerAuthenticated;
 use App\Http\Middleware\RedirectIfStaffAuthenticated;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\TrackVisit;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,6 +19,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(SecurityHeaders::class);
+
         $middleware->redirectGuestsTo(function (Request $request) {
             if ($request->is('staff*')) {
                 return route('staff.login');
@@ -31,6 +35,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
             'staff.guest' => RedirectIfStaffAuthenticated::class,
             'staff.active' => EnsureStaffActive::class,
             'staff.role' => EnsureStaffRole::class,
+            'track.visit' => TrackVisit::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

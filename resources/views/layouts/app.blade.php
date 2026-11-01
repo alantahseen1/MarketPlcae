@@ -6,6 +6,19 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', __('app.site_name'))</title>
+    <meta name="description" content="@yield('meta_description', 'گەورەترین بازاڕی ئەلیکترۆنی لە کوردستان بۆ کڕین و فرۆشتنی مۆبایل، لاپتۆپ، کۆمپیوتەر و کەلوپەلی ئەلیکترۆنی.')">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="@yield('og_title', View::yieldContent('title', __('app.site_name')))">
+    <meta property="og:description" content="@yield('og_description', View::yieldContent('meta_description', 'گەورەترین بازاڕی ئەلیکترۆنی لە کوردستان بۆ کڕین و فرۆشتنی مۆبایل، لاپتۆپ، کۆمپیوتەر و کەلوپەلی ئەلیکترۆنی.'))">
+    <meta property="og:url" content="@yield('og_url', url()->current())">
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:locale" content="ckb_IQ">
+    @hasSection('og_image')
+        <meta property="og:image" content="@yield('og_image')">
+    @endif
+
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -51,17 +64,18 @@
                             </a>
 
                             <div class="flex items-center gap-3 border-r border-gray-200 pr-4 mr-2">
-                                <span class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                <a href="{{ route('customer.profile.edit') }}" 
+                                   class="text-sm font-semibold text-gray-900 hover:text-indigo-600 flex items-center gap-2 transition {{ request()->routeIs('customer.profile.*', 'customer.password.*') ? 'text-indigo-600 font-bold' : '' }}">
                                     <span class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">
                                         {{ mb_substr(auth('customer')->user()->full_name, 0, 1) }}
                                     </span>
-                                    {{ auth('customer')->user()->full_name }}
+                                    <span>{{ auth('customer')->user()->full_name }}</span>
                                     @if(auth('customer')->user()->type === 'shop')
                                         <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full border border-indigo-200">
                                             {{ auth('customer')->user()->shop_name }}
                                         </span>
                                     @endif
-                                </span>
+                                </a>
 
                                 <form action="{{ route('logout') }}" method="POST" class="inline">
                                     @csrf
@@ -107,6 +121,9 @@
                     @if(auth('customer')->check())
                         <a href="{{ route('customer.products.index') }}" class="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md">
                             {{ __('products.my_products') }}
+                        </a>
+                        <a href="{{ route('customer.profile.edit') }}" class="px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md">
+                            {{ __('profile.my_profile') }}
                         </a>
                         <a href="{{ route('customer.products.create') }}" class="px-3 py-2 text-base font-medium text-center text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg">
                             {{ __('products.add_product') }}

@@ -1,7 +1,7 @@
 @props(['product'])
 
 @php
-    $imageUrl = \App\Helpers\MarketplaceHelper::mainImageUrl($product);
+    $imageUrl = \App\Helpers\MarketplaceHelper::thumbnailImageUrl($product);
     $seller = $product->customer;
     $isShop = $seller && $seller->type === 'shop';
     $sellerName = $isShop ? ($seller->shop_name ?? $seller->full_name) : ($seller->full_name ?? '');

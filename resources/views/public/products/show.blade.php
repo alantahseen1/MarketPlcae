@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('title', $product->title . ' - ' . __('app.site_name'))
+@section('meta_description', $product->title . ' بە نرخی ' . \App\Helpers\MarketplaceHelper::formatPrice($product->price) . '. ' . \Illuminate\Support\Str::limit(strip_tags($product->description), 130))
+@section('og_title', $product->title . ' - ' . \App\Helpers\MarketplaceHelper::formatPrice($product->price))
+@section('og_description', $product->title . ' بە نرخی ' . \App\Helpers\MarketplaceHelper::formatPrice($product->price) . '. ' . \Illuminate\Support\Str::limit(strip_tags($product->description), 130))
+@section('og_type', 'product')
+@if(\App\Helpers\MarketplaceHelper::mainImageUrl($product))
+    @section('og_image', \App\Helpers\MarketplaceHelper::mainImageUrl($product))
+@endif
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">

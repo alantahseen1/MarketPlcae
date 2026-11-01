@@ -98,4 +98,3 @@ class CategoryController extends Controller
             ->with('success', $msg);
     }
 }
-

@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class MarketplaceHelper
 {
@@ -46,5 +47,28 @@ class MarketplaceHelper
         $mainImage = $product->images->firstWhere('is_main', true) ?? $product->images->first();
 
         return $mainImage ? asset('storage/'.$mainImage->image_path) : null;
+    }
+
+    /**
+     * Get the thumbnail image URL (400px) for a product card/list.
+     * Falls back to full image if thumbnail does not exist.
+     */
+    public static function thumbnailImageUrl(?Product $product): ?string
+    {
+        if (! $product || $product->images->isEmpty()) {
+            return null;
+        }
+
+        $mainImage = $product->images->firstWhere('is_main', true) ?? $product->images->first();
+        if (! $mainImage) {
+            return null;
+        }
+
+        $thumbRelPath = dirname($mainImage->image_path).'/thumb_'.basename($mainImage->image_path);
+        if (Storage::disk('public')->exists($thumbRelPath)) {
+            return asset('storage/'.$thumbRelPath);
+        }
+
+        return asset('storage/'.$mainImage->image_path);
     }
 }

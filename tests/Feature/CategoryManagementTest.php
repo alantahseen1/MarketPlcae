@@ -192,4 +192,3 @@ class CategoryManagementTest extends TestCase
             ->assertStatus(403);
     }
 }
-

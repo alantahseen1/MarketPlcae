@@ -346,4 +346,3 @@ class ReportTest extends TestCase
             ->assertStatus(403);
     }
 }
-

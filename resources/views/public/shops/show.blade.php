@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('title', ($shop->shop_name ?? $shop->full_name) . ' - ' . __('public.shop_profile'))
+@section('meta_description', 'پڕۆفایلی فرۆشگای ' . ($shop->shop_name ?? $shop->full_name) . ' لە ' . $shop->address . '. بینینی سەرجەم کاڵا و ئامێرە ئەلیکترۆنییەکان.')
+@section('og_title', ($shop->shop_name ?? $shop->full_name) . ' - ' . __('public.shop_profile'))
+@section('og_description', 'پڕۆفایلی فرۆشگای ' . ($shop->shop_name ?? $shop->full_name) . ' لە ' . $shop->address . '. بینینی سەرجەم کاڵا و ئامێرە ئەلیکترۆنییەکان.')
+@if($shop->logo)
+    @section('og_image', asset('storage/' . $shop->logo))
+@endif
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">

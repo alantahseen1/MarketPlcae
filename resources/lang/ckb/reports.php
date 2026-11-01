@@ -28,4 +28,3 @@ return [
     'status_dismissed' => 'ڕەتکراوەتەوە',
     'back' => 'گەڕانەوە',
 ];
-

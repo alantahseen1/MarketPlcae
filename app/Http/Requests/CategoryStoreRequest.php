@@ -27,4 +27,3 @@ class CategoryStoreRequest extends FormRequest
         return $this->categoryRules();
     }
 }
-

@@ -129,4 +129,15 @@ return [
     'activate_category_btn' => 'چالاککردن',
     'category_deactivated_success' => 'هاوپۆلەکە ناچالاککرا.',
     'category_activated_success' => 'هاوپۆلەکە چالاککرایەوە.',
+
+    // Visitor Stats
+    'visitor_stats_title' => 'ئاماری سەردانکەران',
+    'today_visitors' => 'سەردانکەرانی ئەمڕۆ',
+    'last_7_days_visitors' => '٧ ڕۆژی ڕابردوو',
+    'last_30_days_visitors' => '٣٠ ڕۆژی ڕابردوو',
+    'total_visitor_days' => 'کۆی ڕۆژ-سەردانکەر',
+    'today_page_views' => 'بینینی پەڕەکانی ئەمڕۆ',
+    'visitor_stats_note' => 'تێبینی: سەردانکەر واتە یەک ئامێری جیاواز لە ڕۆژێکدا (One unique device per day).',
+    'chart_14_days' => 'هاتوچۆی ١٤ ڕۆژی ڕابردوو',
+    'visitors_unit' => 'سەردانکەر',
 ];

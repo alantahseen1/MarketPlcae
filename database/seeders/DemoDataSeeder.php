@@ -10,6 +10,7 @@ use App\Models\Report;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -743,6 +744,14 @@ class DemoDataSeeder extends Seeder
                     $item['cond']
                 );
 
+                $thumbPath = "{$productDir}/thumb_img_{$imgIdx}.jpg";
+                $this->generateProductThumbnail(
+                    storage_path("app/public/{$thumbPath}"),
+                    $product->title,
+                    $imgIdx,
+                    $item['cond']
+                );
+
                 ProductImage::create([
                     'product_id' => $product->id,
                     'image_path' => $imagePath,
@@ -808,7 +817,44 @@ class DemoDataSeeder extends Seeder
             }
         }
 
-        // 7. Output summary table
+        // 7. Visitor Statistics (30 days of realistic traffic, 40-300 unique devices/day)
+        $this->command->info('Seeding visitor statistics for the last 30 days...');
+        $visitsToInsert = [];
+        $appKey = (string) config('app.key', 'marketplace_fallback_salt');
+
+        for ($d = 29; $d >= 0; $d--) {
+            $date = Carbon::today()->subDays($d);
+            $dateStr = $date->toDateString();
+            $isWeekend = in_array($date->dayOfWeek, [Carbon::FRIDAY, Carbon::SATURDAY]);
+            $dailyVisitorCount = $isWeekend ? rand(150, 300) : rand(40, 180);
+
+            for ($v = 1; $v <= $dailyVisitorCount; $v++) {
+                $fakeIp = '192.168.'.rand(1, 100).'.'.rand(1, 254);
+                $fakeUa = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) DemoBrowser/'.$v;
+                $visitorHash = hash('sha256', $fakeIp.'|'.$fakeUa.'|'.$dateStr.'|'.$appKey);
+                $pageViews = rand(1, 7);
+
+                $createdAt = $date->copy()->addHours(rand(0, 23))->addMinutes(rand(0, 59));
+                $visitsToInsert[] = [
+                    'visitor_hash' => $visitorHash,
+                    'visit_date' => $dateStr,
+                    'page_views' => $pageViews,
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ];
+
+                if (count($visitsToInsert) >= 200) {
+                    DB::table('visit')->insertOrIgnore($visitsToInsert);
+                    $visitsToInsert = [];
+                }
+            }
+        }
+
+        if (! empty($visitsToInsert)) {
+            DB::table('visit')->insertOrIgnore($visitsToInsert);
+        }
+
+        // 8. Output summary table
         $this->command->newLine();
         $this->command->info('Demo data seeded successfully!');
         $this->command->table(
@@ -820,6 +866,7 @@ class DemoDataSeeder extends Seeder
                 ['product', Product::count()],
                 ['product_image', ProductImage::count()],
                 ['report', Report::count()],
+                ['visit', DB::table('visit')->count()],
             ]
         );
     }
@@ -907,6 +954,34 @@ class DemoDataSeeder extends Seeder
         imagestring($image, 2, (int) ($width / 2) - 110, 400, $marketplaceTag, $grayText);
 
         imagejpeg($image, $fullPath, 85);
+        imagedestroy($image);
+    }
+
+    /**
+     * Generate a 400x300 product thumbnail image with GD.
+     */
+    protected function generateProductThumbnail(string $fullPath, string $title, int $sortOrder, string $condition): void
+    {
+        $width = 400;
+        $height = 300;
+        $image = imagecreatetruecolor($width, $height);
+        if (! $image) {
+            return;
+        }
+
+        $bgColor = imagecolorallocate($image, 241, 245, 249);
+        $accentColor = imagecolorallocate($image, 79, 70, 229);
+        $cardColor = imagecolorallocate($image, 255, 255, 255);
+        $darkText = imagecolorallocate($image, 30, 41, 59);
+
+        imagefilledrectangle($image, 0, 0, $width, $height, $bgColor);
+        imagefilledrectangle($image, 20, 20, $width - 20, $height - 20, $cardColor);
+        imagefilledrectangle($image, 20, 20, $width - 20, 26, $accentColor);
+
+        $label = "THUMB #{$sortOrder}";
+        imagestring($image, 4, (int) ($width / 2) - 30, 130, $label, $darkText);
+
+        imagejpeg($image, $fullPath, 82);
         imagedestroy($image);
     }
 }

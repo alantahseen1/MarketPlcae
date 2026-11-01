@@ -197,4 +197,3 @@ class ReportController extends Controller
             ->with('success', __('staff.customer_banned_success'));
     }
 }
-

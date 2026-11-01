@@ -29,4 +29,3 @@ class CategoryUpdateRequest extends FormRequest
         return $this->categoryRules($id);
     }
 }
-

@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
+use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 use App\Http\Controllers\Customer\ReportController as CustomerReportController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\ProductBrowseController;
 use App\Http\Controllers\Public\ShopController;
+use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\Staff\AuthController as StaffAuthController;
 use App\Http\Controllers\Staff\CategoryController as StaffCategoryController;
 use App\Http\Controllers\Staff\CustomerController as StaffCustomerController;
@@ -17,52 +19,67 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes
+| Public and Customer Routes (Tracked by TrackVisit middleware)
 |--------------------------------------------------------------------------
 */
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/products', [ProductBrowseController::class, 'index'])->name('products.index');
-Route::get('/products/{id}', [ProductBrowseController::class, 'show'])->name('products.show');
-Route::get('/shops/{customerId}', [ShopController::class, 'show'])->name('shops.show');
+Route::middleware('track.visit')->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | Public Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/products', [ProductBrowseController::class, 'index'])->name('products.index');
+    Route::get('/products/{id}', [ProductBrowseController::class, 'show'])->name('products.show');
+    Route::get('/shops/{customerId}', [ShopController::class, 'show'])->name('shops.show');
+    Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
-/*
-|--------------------------------------------------------------------------
-| Customer Guest Routes (Login & Registration)
-|--------------------------------------------------------------------------
-*/
-Route::middleware('customer.guest')->group(function () {
-    Route::get('/register', [CustomerAuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [CustomerAuthController::class, 'register']);
+    /*
+    |--------------------------------------------------------------------------
+    | Customer Guest Routes (Login & Registration)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('customer.guest')->group(function () {
+        Route::get('/register', [CustomerAuthController::class, 'showRegisterForm'])->name('register');
+        Route::post('/register', [CustomerAuthController::class, 'register'])->middleware('throttle:register');
 
-    Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [CustomerAuthController::class, 'login']);
-});
-
-/*
-|--------------------------------------------------------------------------
-| Customer Authenticated Routes (Customer Guard + Active / Not Banned)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth:customer', 'customer.not_banned'])->group(function () {
-    Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('logout');
-
-    Route::prefix('my/products')->name('customer.products.')->group(function () {
-        Route::get('/', [CustomerProductController::class, 'index'])->name('index');
-        Route::get('/create', [CustomerProductController::class, 'create'])->name('create');
-        Route::post('/create', [CustomerProductController::class, 'store'])->name('store.create');
-        Route::post('/', [CustomerProductController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [CustomerProductController::class, 'edit'])->name('edit');
-        Route::put('/{id}/edit', [CustomerProductController::class, 'update'])->name('update.edit');
-        Route::put('/{id}', [CustomerProductController::class, 'update'])->name('update');
-        Route::delete('/{id}', [CustomerProductController::class, 'destroy'])->name('destroy');
-        Route::post('/{id}/sold', [CustomerProductController::class, 'markSold'])->name('sold');
+        Route::get('/login', [CustomerAuthController::class, 'showLoginForm'])->name('login');
+        Route::post('/login', [CustomerAuthController::class, 'login']);
     });
 
-    Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/product/{id}', [CustomerReportController::class, 'createForProduct'])->name('product.create');
-        Route::post('/product/{id}', [CustomerReportController::class, 'storeForProduct'])->name('product.store');
-        Route::get('/customer/{id}', [CustomerReportController::class, 'createForCustomer'])->name('customer.create');
-        Route::post('/customer/{id}', [CustomerReportController::class, 'storeForCustomer'])->name('customer.store');
+    /*
+    |--------------------------------------------------------------------------
+    | Customer Authenticated Routes (Customer Guard + Active / Not Banned)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['auth:customer', 'customer.not_banned'])->group(function () {
+        Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('logout');
+
+        Route::prefix('my/products')->name('customer.products.')->group(function () {
+            Route::get('/', [CustomerProductController::class, 'index'])->name('index');
+            Route::get('/create', [CustomerProductController::class, 'create'])->name('create');
+            Route::post('/create', [CustomerProductController::class, 'store'])->name('store.create')->middleware('throttle:product-create');
+            Route::post('/', [CustomerProductController::class, 'store'])->name('store')->middleware('throttle:product-create');
+            Route::get('/{id}/edit', [CustomerProductController::class, 'edit'])->name('edit');
+            Route::put('/{id}/edit', [CustomerProductController::class, 'update'])->name('update.edit');
+            Route::put('/{id}', [CustomerProductController::class, 'update'])->name('update');
+            Route::delete('/{id}', [CustomerProductController::class, 'destroy'])->name('destroy');
+            Route::post('/{id}/sold', [CustomerProductController::class, 'markSold'])->name('sold');
+        });
+
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/product/{id}', [CustomerReportController::class, 'createForProduct'])->name('product.create');
+            Route::post('/product/{id}', [CustomerReportController::class, 'storeForProduct'])->name('product.store');
+            Route::get('/customer/{id}', [CustomerReportController::class, 'createForCustomer'])->name('customer.create');
+            Route::post('/customer/{id}', [CustomerReportController::class, 'storeForCustomer'])->name('customer.store');
+        });
+
+        Route::prefix('my')->name('customer.')->group(function () {
+            Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
+            Route::put('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+            Route::get('/password', [CustomerProfileController::class, 'editPassword'])->name('password.edit');
+            Route::put('/password', [CustomerProfileController::class, 'updatePassword'])->name('password.update');
+        });
     });
 });
 
