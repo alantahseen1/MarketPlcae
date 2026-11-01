@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Models\Report;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -18,12 +19,14 @@ class DashboardController extends Controller
         $approvedCount = Product::where('status', 'approved')->count();
         $soldCount = Product::where('status', 'sold')->count();
         $customersCount = Customer::count();
+        $openReportsCount = Report::where('status', 'open')->count();
 
         return view('staff.dashboard', compact(
             'pendingCount',
             'approvedCount',
             'soldCount',
-            'customersCount'
+            'customersCount',
+            'openReportsCount'
         ));
     }
 }

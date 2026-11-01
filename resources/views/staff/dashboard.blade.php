@@ -24,7 +24,7 @@
     </div>
 
     <!-- Stat Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
         <!-- Pending Products -->
         <a href="{{ route('staff.products.index', ['status' => 'pending']) }}"
             class="bg-white rounded-2xl border border-amber-200 p-6 shadow-xs hover:border-amber-400 hover:shadow-md transition flex flex-col justify-between">
@@ -36,6 +36,20 @@
             </div>
             <div class="text-3xl font-black text-amber-700">{{ $pendingCount }}</div>
         </a>
+
+        <!-- Open Reports (Admin Only) -->
+        @if(auth('staff')->user()->role === 'admin')
+            <a href="{{ route('staff.reports.index') }}"
+                class="bg-white rounded-2xl border border-red-200 p-6 shadow-xs hover:border-red-400 hover:shadow-md transition flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-semibold text-slate-600">{{ __('staff.open_reports') }}</span>
+                    <span class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
+                        ⚠️
+                    </span>
+                </div>
+                <div class="text-3xl font-black text-red-700">{{ $openReportsCount }}</div>
+            </a>
+        @endif
 
         <!-- Approved Products -->
         <a href="{{ route('staff.products.index', ['status' => 'approved']) }}"

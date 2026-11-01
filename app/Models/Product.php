@@ -72,6 +72,9 @@ class Product extends Model
         $query->where($this->qualifyColumn('status'), 'approved')
             ->whereHas('customer', function (Builder $customerQuery): void {
                 $customerQuery->where('is_banned', false);
+            })
+            ->whereHas('category', function (Builder $categoryQuery): void {
+                $categoryQuery->where('is_active', true);
             });
     }
 

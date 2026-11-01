@@ -2,12 +2,16 @@
 
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
+use App\Http\Controllers\Customer\ReportController as CustomerReportController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\ProductBrowseController;
 use App\Http\Controllers\Public\ShopController;
 use App\Http\Controllers\Staff\AuthController as StaffAuthController;
+use App\Http\Controllers\Staff\CategoryController as StaffCategoryController;
+use App\Http\Controllers\Staff\CustomerController as StaffCustomerController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Staff\ProductReviewController as StaffProductReviewController;
+use App\Http\Controllers\Staff\ReportController as StaffReportController;
 use App\Http\Controllers\Staff\StaffUserController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +57,13 @@ Route::middleware(['auth:customer', 'customer.not_banned'])->group(function () {
         Route::delete('/{id}', [CustomerProductController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/sold', [CustomerProductController::class, 'markSold'])->name('sold');
     });
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/product/{id}', [CustomerReportController::class, 'createForProduct'])->name('product.create');
+        Route::post('/product/{id}', [CustomerReportController::class, 'storeForProduct'])->name('product.store');
+        Route::get('/customer/{id}', [CustomerReportController::class, 'createForCustomer'])->name('customer.create');
+        Route::post('/customer/{id}', [CustomerReportController::class, 'storeForCustomer'])->name('customer.store');
+    });
 });
 
 /*
@@ -89,5 +100,38 @@ Route::prefix('staff')->middleware(['auth:staff', 'staff.active'])->name('staff.
         Route::post('/', [StaffUserController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [StaffUserController::class, 'edit'])->name('edit');
         Route::put('/{id}', [StaffUserController::class, 'update'])->name('update');
+    });
+
+    // Admin Only: Reports, Customers, Categories
+    Route::middleware('staff.role:admin')->group(function () {
+        // Reports Management
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/', [StaffReportController::class, 'index'])->name('index');
+            Route::get('/{id}', [StaffReportController::class, 'show'])->name('show');
+            Route::post('/{id}/resolve', [StaffReportController::class, 'resolve'])->name('resolve');
+            Route::post('/{id}/dismiss', [StaffReportController::class, 'dismiss'])->name('dismiss');
+            Route::post('/{id}/remove-product', [StaffReportController::class, 'removeProduct'])->name('remove-product');
+            Route::post('/{id}/ban-customer', [StaffReportController::class, 'banCustomer'])->name('ban-customer');
+        });
+
+        // Customer Management
+        Route::prefix('customers')->name('customers.')->group(function () {
+            Route::get('/', [StaffCustomerController::class, 'index'])->name('index');
+            Route::get('/{id}', [StaffCustomerController::class, 'show'])->name('show');
+            Route::post('/{id}/ban', [StaffCustomerController::class, 'ban'])->name('ban');
+            Route::post('/{id}/unban', [StaffCustomerController::class, 'unban'])->name('unban');
+            Route::post('/{id}/verify', [StaffCustomerController::class, 'verify'])->name('verify');
+            Route::post('/{id}/unverify', [StaffCustomerController::class, 'unverify'])->name('unverify');
+        });
+
+        // Category Management
+        Route::prefix('categories')->name('categories.')->group(function () {
+            Route::get('/', [StaffCategoryController::class, 'index'])->name('index');
+            Route::get('/create', [StaffCategoryController::class, 'create'])->name('create');
+            Route::post('/', [StaffCategoryController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [StaffCategoryController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [StaffCategoryController::class, 'update'])->name('update');
+            Route::post('/{id}/toggle', [StaffCategoryController::class, 'toggle'])->name('toggle');
+        });
     });
 });

@@ -36,6 +36,29 @@
                         </a>
 
                         @if(auth('staff')->user()->role === 'admin')
+                            @php
+                                $globalOpenReports = \App\Models\Report::where('status', 'open')->count();
+                            @endphp
+                            <a href="{{ route('staff.reports.index') }}"
+                                class="px-3 py-2 text-sm font-medium rounded-lg transition flex items-center gap-1.5 {{ request()->routeIs('staff.reports.*') ? 'bg-slate-800 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <span>{{ __('staff.reports') }}</span>
+                                @if($globalOpenReports > 0)
+                                    <span class="inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                        {{ $globalOpenReports }}
+                                    </span>
+                                @endif
+                            </a>
+
+                            <a href="{{ route('staff.customers.index') }}"
+                                class="px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('staff.customers.*') ? 'bg-slate-800 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                {{ __('staff.customers') }}
+                            </a>
+
+                            <a href="{{ route('staff.categories.index') }}"
+                                class="px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('staff.categories.*') ? 'bg-slate-800 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                {{ __('staff.categories') }}
+                            </a>
+
                             <a href="{{ route('staff.users.index') }}"
                                 class="px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('staff.users.*') ? 'bg-slate-800 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                                 {{ __('staff.staff_users') }}
@@ -88,6 +111,20 @@
                         {{ __('staff.product_reviews') }}
                     </a>
                     @if(auth('staff')->user()->role === 'admin')
+                        <a href="{{ route('staff.reports.index') }}" class="px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800 rounded-lg flex items-center justify-between">
+                            <span>{{ __('staff.reports') }}</span>
+                            @if($globalOpenReports > 0)
+                                <span class="px-1.5 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">
+                                    {{ $globalOpenReports }}
+                                </span>
+                            @endif
+                        </a>
+                        <a href="{{ route('staff.customers.index') }}" class="px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800 rounded-lg">
+                            {{ __('staff.customers') }}
+                        </a>
+                        <a href="{{ route('staff.categories.index') }}" class="px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800 rounded-lg">
+                            {{ __('staff.categories') }}
+                        </a>
                         <a href="{{ route('staff.users.index') }}" class="px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800 rounded-lg">
                             {{ __('staff.staff_users') }}
                         </a>
